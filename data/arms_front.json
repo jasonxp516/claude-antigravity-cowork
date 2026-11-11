@@ -1,0 +1,38 @@
+{
+ "FA": {
+  "desc": "Claude-only frontend",
+  "transcript": "<subagent-transcripts>/a7f164960f818d7f9.output",
+  "ws": "runs/FA",
+  "tag": null,
+  "tasks": [
+   "F1"
+  ]
+ },
+ "FG": {
+  "desc": "Pure delegation (skill v4)",
+  "transcript": "<subagent-transcripts>/a7ab92bb97bf9164c.output",
+  "ws": "runs/FG",
+  "tag": "F1",
+  "tasks": [
+   "F1"
+  ]
+ },
+ "FH": {
+  "desc": "Hybrid: Claude design, agy wiring",
+  "transcript": "<subagent-transcripts>/aec01136cbad49682.output",
+  "ws": "runs/FH",
+  "tag": "FH",
+  "tasks": [
+   "F1"
+  ]
+ },
+ "FH2": {
+  "desc": "Lean hybrid v5 (+frontend_rules)",
+  "transcript": "<subagent-transcripts>/aa4510e5fde3a8341.output",
+  "ws": "runs/FH2",
+  "tag": "FH2",
+  "tasks": [
+   "F1"
+  ]
+ }
+}

@@ -1,0 +1,5 @@
+{
+ "LA": {"desc": "Claude-only + checklist (large UI)", "transcript": "<subagent-transcripts>/a06fa2a8ebaf57a04.output", "ws": "runs/LA", "tag": null, "tasks": ["F2"]},
+ "LH": {"desc": "Hybrid v5: Claude HTML+CSS, agy JS", "transcript": "<subagent-transcripts>/acfd15e2bc2e95440.output", "ws": "runs/LH", "tag": "LH", "tasks": ["F2"]},
+ "LS": {"desc": "Design-system split: Claude CSS+ref view, agy rest", "transcript": "<subagent-transcripts>/aac08ec6bdde011de.output", "ws": "runs/LS", "tag": "LS", "tasks": ["F2"]}
+}

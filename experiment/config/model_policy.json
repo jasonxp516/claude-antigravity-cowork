@@ -1,0 +1,58 @@
+{
+ "_doc": "Role -> ordered model families. No concrete versions: newest version in a family wins. Effort suffix chosen per role. Default worker for presets = worker_hard (flash high), per 2026-11-11 effort A/B; worker_fast (low) only for trivial mechanical edits.",
+ "quota": {
+  "exhausted_below": 0.03,
+  "low_below": 0.1
+ },
+ "roles": {
+  "worker": {
+   "families": [
+    "flash"
+   ],
+   "effort": "medium",
+   "min_remaining": 0.05
+  },
+  "worker_hard": {
+   "families": [
+    "flash"
+   ],
+   "effort": "high",
+   "min_remaining": 0.05
+  },
+  "planner": {
+   "families": [
+    "carbon",
+    "argon",
+    "pro"
+   ],
+   "effort": "high",
+   "min_remaining": 0.15,
+   "fallback_role": "worker_hard"
+  },
+  "alt_3p": {
+   "families": [
+    "sonnet"
+   ],
+   "effort": "medium",
+   "min_remaining": 0.1,
+   "enabled": false,
+   "fallback_role": "worker"
+  },
+  "auditor": {
+   "families": [
+    "flash"
+   ],
+   "effort": "high",
+   "min_remaining": 0.05,
+   "fallback_role": "worker"
+  },
+  "worker_fast": {
+   "families": [
+    "flash"
+   ],
+   "effort": "low",
+   "min_remaining": 0.05,
+   "fallback_role": "worker"
+  }
+ }
+}

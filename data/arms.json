@@ -1,0 +1,86 @@
+{
+ "A": {
+  "desc": "Claude-only (Sonnet)",
+  "transcript": "<subagent-transcripts>/a8f031aab82b5fa17.output",
+  "ws": "runs/A",
+  "tag": null,
+  "tasks": [
+   "T1",
+   "T2",
+   "T3",
+   "T4",
+   "T5",
+   "T6"
+  ]
+ },
+ "B": {
+  "desc": "Naive outsource + full-diff review",
+  "transcript": "<subagent-transcripts>/ab513d49c4c809060.output",
+  "ws": "runs/B",
+  "tag": "B-",
+  "tasks": [
+   "T1",
+   "T2",
+   "T3",
+   "T4",
+   "T5",
+   "T6"
+  ]
+ },
+ "C1": {
+  "desc": "Skill v1",
+  "transcript": "<subagent-transcripts>/aba0059e1df728346.output",
+  "ws": "runs/C1",
+  "tag": "C1",
+  "tasks": [
+   "T1",
+   "T2",
+   "T3",
+   "T4",
+   "T5",
+   "T6"
+  ]
+ },
+ "C2": {
+  "desc": "Skill v2 (4-call, golden+audit)",
+  "transcript": "<subagent-transcripts>/a411c107b9a9017ef.output",
+  "ws": "runs/C2",
+  "tag": "C2",
+  "tasks": [
+   "T1",
+   "T2",
+   "T3",
+   "T4",
+   "T5",
+   "T6"
+  ]
+ },
+ "C3": {
+  "desc": "Skill v3 (parallel, bg no-poll)",
+  "transcript": "<subagent-transcripts>/acd424d8e7af93905.output",
+  "ws": "runs/C3",
+  "tag": "C3",
+  "tasks": [
+   "T1",
+   "T2",
+   "T3",
+   "T4",
+   "T5",
+   "T6"
+  ]
+ },
+ "C6": {
+  "desc": "Skill v4 (flash-low workers)",
+  "transcript": "<subagent-transcripts>/a58e62037a3f2146e.output",
+  "ws": "runs/C6",
+  "tag": "C6",
+  "tasks": [
+   "T1",
+   "T2",
+   "T3",
+   "T4",
+   "T5",
+   "T6"
+  ]
+ }
+}

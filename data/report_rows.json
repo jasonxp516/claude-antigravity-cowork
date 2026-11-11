@@ -1,0 +1,116 @@
+[
+ {
+  "arm": "A",
+  "desc": "Claude-only (Sonnet)",
+  "claude_IET": 115716,
+  "claude_out": 9548,
+  "claude_turns": 5,
+  "agy_tokens": 0,
+  "agy_calls": 0,
+  "hidden": "50/50",
+  "rate": 1.0,
+  "by_task": {
+   "T1": 5,
+   "T2": 17,
+   "T3": 9,
+   "T4": 2,
+   "T5": 2,
+   "T6": 15
+  }
+ },
+ {
+  "arm": "B",
+  "desc": "Naive outsource + full-diff review",
+  "claude_IET": 217049,
+  "claude_out": 6549,
+  "claude_turns": 29,
+  "agy_tokens": 1795320,
+  "agy_calls": 6,
+  "hidden": "50/50",
+  "rate": 1.0,
+  "by_task": {
+   "T1": 5,
+   "T2": 17,
+   "T3": 9,
+   "T4": 2,
+   "T5": 2,
+   "T6": 15
+  }
+ },
+ {
+  "arm": "C1",
+  "desc": "Skill v1",
+  "claude_IET": 207544,
+  "claude_out": 9566,
+  "claude_turns": 17,
+  "agy_tokens": 287710,
+  "agy_calls": 1,
+  "hidden": "50/50",
+  "rate": 1.0,
+  "by_task": {
+   "T1": 5,
+   "T2": 17,
+   "T3": 9,
+   "T4": 2,
+   "T5": 2,
+   "T6": 15
+  }
+ },
+ {
+  "arm": "C2",
+  "desc": "Skill v2 (4-call, golden+audit)",
+  "claude_IET": 155220,
+  "claude_out": 4329,
+  "claude_turns": 14,
+  "agy_tokens": 783978,
+  "agy_calls": 3,
+  "hidden": "50/50",
+  "rate": 1.0,
+  "by_task": {
+   "T1": 5,
+   "T2": 17,
+   "T3": 9,
+   "T4": 2,
+   "T5": 2,
+   "T6": 15
+  }
+ },
+ {
+  "arm": "C3",
+  "desc": "Skill v3 (parallel, bg no-poll)",
+  "claude_IET": 130565,
+  "claude_out": 3305,
+  "claude_turns": 7,
+  "agy_tokens": 1543454,
+  "agy_calls": 7,
+  "hidden": "50/50",
+  "rate": 1.0,
+  "by_task": {
+   "T1": 5,
+   "T2": 17,
+   "T3": 9,
+   "T4": 2,
+   "T5": 2,
+   "T6": 15
+  }
+ },
+ {
+  "arm": "C6",
+  "desc": "Skill v4 (flash-low workers)",
+  "claude_IET": 78938,
+  "claude_out": 3850,
+  "claude_turns": 9,
+  "agy_tokens": 990994,
+  "agy_calls": 6,
+  "hidden": "50/50",
+  "rate": 1.0,
+  "by_task": {
+   "T1": 5,
+   "T2": 17,
+   "T3": 9,
+   "T4": 2,
+   "T5": 2,
+   "T6": 15
+  }
+ }
+]

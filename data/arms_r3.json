@@ -1,0 +1,50 @@
+{
+ "A2": {
+  "desc": "Claude-only (Sonnet) T7-T10",
+  "transcript": "<subagent-transcripts>/ae7b23576a428046c.output",
+  "ws": "runs/A2",
+  "tag": null,
+  "tasks": [
+   "T7",
+   "T8",
+   "T9",
+   "T10"
+  ]
+ },
+ "C4": {
+  "desc": "Skill v3 T7-T10",
+  "transcript": "<subagent-transcripts>/a73ca9602b4ad63ae.output",
+  "ws": "runs/C4",
+  "tag": "C4",
+  "tasks": [
+   "T7",
+   "T8",
+   "T9",
+   "T10"
+  ]
+ },
+ "C5": {
+  "desc": "Skill v4 (flash-low workers) T7-T10",
+  "transcript": "<subagent-transcripts>/a9bd0a42d8defb960.output",
+  "ws": "runs/C5",
+  "tag": "C5",
+  "tasks": [
+   "T7",
+   "T8",
+   "T9",
+   "T10"
+  ]
+ },
+ "C7": {
+  "desc": "Skill v6 (planner+preset) T7-T10",
+  "transcript": "<subagent-transcripts>/aaf5e273f7eae4b4a.output",
+  "ws": "runs/C7",
+  "tag": "C7",
+  "tasks": [
+   "T7",
+   "T8",
+   "T9",
+   "T10"
+  ]
+ }
+}

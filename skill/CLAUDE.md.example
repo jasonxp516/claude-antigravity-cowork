@@ -1,0 +1,12 @@
+# Global working rules
+
+## Cowork with Antigravity (agy) to save Claude quota
+For implementation work that has (or can be given) a clear written spec testable by automated tests,
+first run `python3 ~/.claude/skills/agy-cowork/tools/plan_split.py '<items json>'` and follow its verdict;
+when it says delegate, use the `agy-cowork` skill (~/.claude/skills/agy-cowork):
+Claude writes the contract (short spec + golden tests) and reads only the compact report; agy (Gemini Flash)
+implements, tests and self-audits. Validated 2026-11-11: −32–38% Claude tokens, same hidden-test quality.
+- Do it yourself for small batches (< ~300 backend lines), < 40-line items, or work needing design judgment.
+- Frontend: never let agy own visual design. Small UIs: write them yourself using the skill's design checklist;
+  large UIs: design-system split (Claude design.css + shell + one reference view; agy the rest). See the skill.
+- If agy quota is exhausted (delegate.py exit 3), tell the user — they can switch agy accounts.

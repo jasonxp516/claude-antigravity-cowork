@@ -1,0 +1,58 @@
+[
+ {
+  "arm": "FA",
+  "desc": "Claude-only frontend",
+  "claude_IET": 94645,
+  "claude_out": 5839,
+  "claude_turns": 6,
+  "agy_tokens": 0,
+  "agy_calls": 0,
+  "hidden": "5/5",
+  "rate": 1.0,
+  "by_task": {
+   "F1": 5
+  }
+ },
+ {
+  "arm": "FG",
+  "desc": "Pure delegation (skill v4)",
+  "claude_IET": 126401,
+  "claude_out": 2517,
+  "claude_turns": 8,
+  "agy_tokens": 678277,
+  "agy_calls": 2,
+  "hidden": "5/5",
+  "rate": 1.0,
+  "by_task": {
+   "F1": 5
+  }
+ },
+ {
+  "arm": "FH",
+  "desc": "Hybrid: Claude design, agy wiring",
+  "claude_IET": 151084,
+  "claude_out": 8065,
+  "claude_turns": 13,
+  "agy_tokens": 1034641,
+  "agy_calls": 5,
+  "hidden": "5/5",
+  "rate": 1.0,
+  "by_task": {
+   "F1": 5
+  }
+ },
+ {
+  "arm": "FH2",
+  "desc": "Lean hybrid v5 (+frontend_rules)",
+  "claude_IET": 150346,
+  "claude_out": 7210,
+  "claude_turns": 9,
+  "agy_tokens": 566915,
+  "agy_calls": 3,
+  "hidden": "5/5",
+  "rate": 1.0,
+  "by_task": {
+   "F1": 5
+  }
+ }
+]

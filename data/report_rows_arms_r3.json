@@ -1,0 +1,70 @@
+[
+ {
+  "arm": "A2",
+  "desc": "Claude-only (Sonnet) T7-T10",
+  "claude_IET": 112669,
+  "claude_out": 9915,
+  "claude_turns": 8,
+  "agy_tokens": 0,
+  "agy_calls": 0,
+  "hidden": "17/17",
+  "rate": 1.0,
+  "by_task": {
+   "T7": 5,
+   "T8": 6,
+   "T9": 3,
+   "T10": 3
+  }
+ },
+ {
+  "arm": "C4",
+  "desc": "Skill v3 T7-T10",
+  "claude_IET": 105691,
+  "claude_out": 2944,
+  "claude_turns": 7,
+  "agy_tokens": 1350678,
+  "agy_calls": 6,
+  "hidden": "17/17",
+  "rate": 1.0,
+  "by_task": {
+   "T7": 5,
+   "T8": 6,
+   "T9": 3,
+   "T10": 3
+  }
+ },
+ {
+  "arm": "C5",
+  "desc": "Skill v4 (flash-low workers) T7-T10",
+  "claude_IET": 69856,
+  "claude_out": 3285,
+  "claude_turns": 8,
+  "agy_tokens": 722736,
+  "agy_calls": 6,
+  "hidden": "17/17",
+  "rate": 1.0,
+  "by_task": {
+   "T7": 5,
+   "T8": 6,
+   "T9": 3,
+   "T10": 3
+  }
+ },
+ {
+  "arm": "C7",
+  "desc": "Skill v6 (planner+preset) T7-T10",
+  "claude_IET": 89717,
+  "claude_out": 4316,
+  "claude_turns": 10,
+  "agy_tokens": 907677,
+  "agy_calls": 6,
+  "hidden": "17/17",
+  "rate": 1.0,
+  "by_task": {
+   "T7": 5,
+   "T8": 6,
+   "T9": 3,
+   "T10": 3
+  }
+ }
+]

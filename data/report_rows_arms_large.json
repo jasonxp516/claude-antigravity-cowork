@@ -1,0 +1,44 @@
+[
+ {
+  "arm": "LA",
+  "desc": "Claude-only + checklist (large UI)",
+  "claude_IET": 187902,
+  "claude_out": 15665,
+  "claude_turns": 9,
+  "agy_tokens": 0,
+  "agy_calls": 0,
+  "hidden": "7/7",
+  "rate": 1.0,
+  "by_task": {
+   "F2": 7
+  }
+ },
+ {
+  "arm": "LH",
+  "desc": "Hybrid v5: Claude HTML+CSS, agy JS",
+  "claude_IET": 202235,
+  "claude_out": 13587,
+  "claude_turns": 14,
+  "agy_tokens": 283943,
+  "agy_calls": 2,
+  "hidden": "6/7",
+  "rate": 0.857,
+  "by_task": {
+   "F2": 6
+  }
+ },
+ {
+  "arm": "LS",
+  "desc": "Design-system split: Claude CSS+ref view, agy rest",
+  "claude_IET": 171648,
+  "claude_out": 11663,
+  "claude_turns": 11,
+  "agy_tokens": 558804,
+  "agy_calls": 2,
+  "hidden": "7/7",
+  "rate": 1.0,
+  "by_task": {
+   "F2": 7
+  }
+ }
+]
