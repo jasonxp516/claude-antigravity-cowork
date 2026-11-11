@@ -132,6 +132,7 @@ Claude 節省（IET）≈ 12 × 被卸載的 output tokens − 35k（每批固�
 | v5 | 前端：Opus 審查 → `frontend_rules.md` + 設計 checklist | — |
 | v6 | `--preset`、`plan_split.py`、交接自我檢查、spec 衝突規則、行為軌跡 | 62–70% |
 | v7 | Flash effort A/B：high 盲審 8.3 vs 6.5、8 vs 7（low 有 tests 抓不到的真 bug）→ 預設 high | Claude 不變；agy 額度 ~5× |
+| (v8) | 子代理快取保溫：實測多花 22%，**未採用** | 172.7k vs 142.1k |
 
 ### Flash low vs high（v7 的依據）
 | 批次 | effort | hidden | 耗時 | agy 5h 額度 | 盲審 |
@@ -142,6 +143,17 @@ Claude 節省（IET）≈ 12 × 被卸載的 output tokens − 35k（每批固�
 | T7–T10 | high | 17/17 | ~13.5 分 | 13.6% | **8** |
 
 > 在 subagent 裡（5 分鐘 cache）長等待會花 Claude token，那是 v4 選 low 的原因；在主對話（1 小時 cache）等待幾乎免費，所以 v7 改回 high。
+
+### 子代理快取保溫（keep-alive）— 測過，不採用
+子代理的快取只有 5 分鐘，等 high 跑 20 分鐘必定過期一次。試過每 ≤4.5 分鐘喚醒子代理一次（`experiment/tools/wait_delegate.py`）讓快取保溫：
+
+| 等待方式 | Claude IET | 回合 | hidden |
+|---|---|---|---|
+| 每 ≤4.5 分鐘喚醒 | 172.7k | 20 | 17/17 |
+| 閒置等通知（失效一次） | **142.1k** | 11 | 17/17 |
+
+快取失效只會發生**一次**（且系統提示仍命中，代價 ≈ 31k），保溫卻是每 4 分鐘付一次（≈ 5–6k），等待一長就反超；
+加上 harness 會把超過 ~3 分鐘的指令自動轉背景，喚醒節奏不穩定。→ 子代理盡早委派、或直接從主對話（1 小時快取）委派即可。
 
 完整數據、各輪表格、決策紀錄實驗、限制說明：[`docs/REPORT.md`](docs/REPORT.md)。
 
