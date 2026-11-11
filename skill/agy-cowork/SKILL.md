@@ -2,7 +2,7 @@
 name: agy-cowork
 description: Cowork with Antigravity (agy CLI, Gemini) to save Claude tokens on implementation work. Use when a coding task has a clear written spec that can be checked by tests (backend logic, CRUD, parsers, CLIs, APIs, glue code, bug fixes with known expected behavior, refactors, test backfill, large UI logic layers), or when the user asks to delegate to / cowork with Antigravity or Gemini.
 ---
-# agy-cowork (v6, validated 2026-11-11)
+# agy-cowork (v7, validated 2026-11-11)
 
 Measured (2026-11-11, hidden tests + blind Opus UI scoring): backend batches cost **62–68%** of Claude-only with equal
 quality; naive outsourcing cost **188%**. Claude's cost = turns × context: every tool call re-reads the context, and code
@@ -15,7 +15,7 @@ you write yourself is re-read on every later turn. Long waits (> 5 min) expire t
 ```
 python3 $COWORK/tools/plan_split.py '[{"name":"…","kind":"backend|logic|bugfix|refactor|tests|docs|frontend-logic|frontend-visual","lines":N,"testable":true,"judgment":false}, …]'
 ```
-Follow its verdict. Rules it encodes: break-even ≈ 300 backend lines per batch; < 40-line items, untestable work,
+Add `--subagent` if you are a subagent (5-min cache: a 10–20 min flash-high wait costs one ~30k cache rewrite). Follow its verdict. Rules it encodes: break-even ≈ 300 backend lines per batch; < 40-line items, untestable work,
 security/architecture judgment and ALL visual design stay with Claude; batch everything delegable into ONE call.
 
 ## Backend / logic recipe (≤ 4 calls)

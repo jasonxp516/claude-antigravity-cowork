@@ -1,4 +1,8 @@
-# Claude × Antigravity 協作實驗報告（2026-11-11）
+# 原始實驗筆記（依時間順序）
+
+> 這是實驗進行中的原始紀錄，保留原貌供查證。整理過的結果請看 [RESULTS.md](RESULTS.md)。
+
+## Claude × Antigravity 協作實驗報告（2026-11-11）
 
 ## 結論
 - **Skill v4 在兩組任務上都穩定省下 32–38% 的 Claude 用量，品質不變（hidden tests 全過）。**
