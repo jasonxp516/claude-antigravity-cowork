@@ -88,7 +88,8 @@ def run_agy(prompt, model, cwd, conv=None, timeout=900):
 def protected_changes(cwd, base, patterns):
     changed = git(cwd, "diff", "--name-only", base).split() + \
         [l[3:] for l in git(cwd, "status", "--porcelain").splitlines() if l.startswith("??")]
-    return sorted({f for f in changed for pat in patterns if fnmatch.fnmatch(f, pat)})
+    return sorted({f for f in changed for pat in patterns
+                   if fnmatch.fnmatch(f, pat) and "__pycache__" not in f and not f.endswith(".pyc")})
 
 
 def public_symbols(cwd, base):
@@ -161,22 +162,30 @@ def main():
     ap.add_argument("--retries", type=int, default=2)
     ap.add_argument("--protect", action="append", default=[])
     ap.add_argument("--tag", default="")
-    ap.add_argument("--timeout", type=int, default=900)
+    ap.add_argument("--timeout", type=int, default=1800)
     ap.add_argument("--audit", action="store_true", help="after acceptance passes, run a fresh agy auditor and feed issues back once")
     ap.add_argument("--audit-role", default="auditor")
     ap.add_argument("--parallel", action="store_true", help="run each --spec concurrently in its own git worktree")
     ap.add_argument("--then-spec", action="append", default=[], help="specs that depend on --spec ones; run after merge")
+    ap.add_argument("--fast", action="store_true",
+                    help="preset backend: skip the orchestrator and run Hydrogen-high specs in parallel (~5 min instead of ~9); "
+                         "use inside a Claude subagent so the wait stays within its 5-min prompt cache")
     ap.add_argument("--preset", choices=["backend", "frontend-js"],
                     help="measured-best defaults: worker_hard (flash-high), --parallel, --audit, retries 2, "
                          "protect tests/acceptance/*; frontend-js also attaches frontend_rules.md")
     a = ap.parse_args()
     if a.preset:
-        # 2026-11-11 effort A/B: flash-high scored 8.3 vs 6.5 and 8 vs 7 in blind review (low had real bugs the
-        # hidden tests missed); costs ~5x 5h-quota and ~4x wall time. Opt out with --role worker_fast.
-        if a.role == "worker": a.role = "worker_hard"
-        a.escalate_role = a.escalate_role or "worker_hard"
+        # 2026-11-19 Gemini 4 eval (T1–T6, blind review): Orchestrator (planner from Argon/Neon quota + Hydrogen-high
+        # executor, ONE session) 8–8.5 at the lowest quota; Hydrogen-high parallel 7 but fastest (<5 min); flash-high 6.
         a.audit = True
         a.parallel = True
+        a.escalate_role = a.escalate_role or "worker_hard"
+        if a.role == "worker":
+            a.role = "worker_hard"
+            if a.preset == "backend" and not a.fast:
+                o = agy_models.pick("orchestrator")
+                if o.get("model") and not o.get("fallback_from"):
+                    a.role, a.parallel = "orchestrator", False  # the orchestrator plans/splits the whole batch itself
         if "tests/acceptance/*" not in a.protect: a.protect.append("tests/acceptance/*")
         if a.preset == "frontend-js":
             fr = next((p for p in [ROOT / "frontend_rules.md", ROOT / ".claude/skills/agy-cowork/frontend_rules.md"] if p.exists()), None)

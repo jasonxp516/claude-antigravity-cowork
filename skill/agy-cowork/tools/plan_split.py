@@ -2,8 +2,9 @@
 """Decide Claude-vs-agy division of labor from measured data (2026-11-11 experiments), so the model does not re-derive it.
 
 Usage:  plan_split.py '<json list>' [--subagent]   or   plan_split.py items.json [--subagent]
-        --subagent: you run inside a subagent (5-min prompt cache). A flash-high batch (10-20 min) then costs one
-                    cache rewrite (~30k IET, measured C9 2026-11-11), so the break-even rises.
+        --subagent: you run inside a subagent (5-min prompt cache). A wait > 5 min costs one cache rewrite
+                    (~30k IET, measured C9 2026-11-11), so the break-even rises. Gemini 4 (2026-11-19): pass --fast to
+                    delegate.py in a subagent (Hydrogen-high parallel, ~5 min) to stay near the cache window.
 Item:   {"name": "...", "kind": KIND, "lines": est_lines_of_code, "testable": true, "judgment": false}
 KIND:   backend | logic | bugfix | refactor | tests | frontend-visual | frontend-logic | docs
 Output: one line per item + a batch verdict.
@@ -24,7 +25,8 @@ SUBAGENT_CACHE_MISS = 30_000  # extra IET when waiting > 5 min inside a subagent
 OFFLOAD_SHARE = {             # share of Claude's would-be output that agy can take over
     "backend": 0.70, "logic": 0.70, "bugfix": 0.6, "refactor": 0.8, "tests": 0.9, "docs": 0.8,
     "frontend-logic": 0.25,   # measured: Claude still writes design system/markup contract + golden tests
-    "frontend-visual": 0.0,   # never delegate visual design (blind scores 5.6/10 vs 7–7.9)
+    "frontend-visual": 0.0,   # Claude by default. 3.8 Flash scored 5.6 vs Claude 7–7.9; Gemini 4 Neon 8.5 vs Claude 8
+                              # (2026-11-19, n=1) -> optional `designer` trial, see SKILL.md
 }
 
 
@@ -36,7 +38,7 @@ def decide(items, subagent=False):
         share = OFFLOAD_SHARE.get(kind, 0.5)
         reason = None
         if kind == "frontend-visual":
-            reason = "visual design stays with Claude"
+            reason = "visual design: Claude by default (optional: Neon `designer` draft + your screenshot review)"
         elif not it.get("testable", True):
             reason = "not testable by automated tests"
         elif it.get("judgment"):

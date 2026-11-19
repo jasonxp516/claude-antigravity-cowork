@@ -1,5 +1,5 @@
 {
- "_doc": "Role -> ordered model families. No concrete versions: newest version in a family wins. Effort suffix chosen per role. Default worker for presets = worker_hard (flash high), per 2026-11-11 effort A/B; worker_fast (low) only for trivial mechanical edits.",
+ "_doc": "Role -> ordered model families (newest version within a family wins; families listed in preference order). No concrete ids. 2026-11-19 Gemini 4 eval: preset backend = orchestrator (planner from Argon/Neon quota, executes with Hydrogen high; blind 8\u20138.5 vs Hydrogen alone 7, flash-high 6, cheapest quota), fallback worker_hard (Hydrogen high, parallel, <5 min). auditor = Hydrogen high (only model that caught a known bug). designer = Neon high (tentative: small-UI blind 8.5 vs Claude 8, n=1).",
  "quota": {
   "exhausted_below": 0.03,
   "low_below": 0.1
@@ -7,6 +7,7 @@
  "roles": {
   "worker": {
    "families": [
+    "hydrogen",
     "flash"
    ],
    "effort": "medium",
@@ -14,6 +15,7 @@
   },
   "worker_hard": {
    "families": [
+    "hydrogen",
     "flash"
    ],
    "effort": "high",
@@ -23,6 +25,7 @@
    "families": [
     "carbon",
     "argon",
+    "neon",
     "pro"
    ],
    "effort": "high",
@@ -40,6 +43,7 @@
   },
   "auditor": {
    "families": [
+    "hydrogen",
     "flash"
    ],
    "effort": "high",
@@ -48,11 +52,133 @@
   },
   "worker_fast": {
    "families": [
+    "hydrogen",
     "flash"
    ],
    "effort": "low",
    "min_remaining": 0.05,
    "fallback_role": "worker"
+  },
+  "hy_low": {
+   "families": [
+    "hydrogen"
+   ],
+   "effort": "low",
+   "min_remaining": 0.03,
+   "_exp": "2026-11-13 Hydrogen probe only"
+  },
+  "hy_medium": {
+   "families": [
+    "hydrogen"
+   ],
+   "effort": "medium",
+   "min_remaining": 0.03,
+   "_exp": "2026-11-13 Hydrogen probe only"
+  },
+  "hy_high": {
+   "families": [
+    "hydrogen"
+   ],
+   "effort": "high",
+   "min_remaining": 0.03,
+   "_exp": "2026-11-13 Hydrogen probe only"
+  },
+  "hy_xhigh": {
+   "families": [
+    "hydrogen"
+   ],
+   "effort": "xhigh",
+   "min_remaining": 0.03,
+   "_exp": "2026-11-13 Hydrogen probe only"
+  },
+  "neon_low": {
+   "families": [
+    "neon"
+   ],
+   "effort": "low",
+   "min_remaining": 0.03,
+   "_exp": "2026-11-19 Neon probe"
+  },
+  "neon_medium": {
+   "families": [
+    "neon"
+   ],
+   "effort": "medium",
+   "min_remaining": 0.03,
+   "_exp": "2026-11-19 Neon probe"
+  },
+  "neon_high": {
+   "families": [
+    "neon"
+   ],
+   "effort": "high",
+   "min_remaining": 0.03,
+   "_exp": "2026-11-19 Neon probe"
+  },
+  "neon_xhigh": {
+   "families": [
+    "neon"
+   ],
+   "effort": "xhigh",
+   "min_remaining": 0.03,
+   "_exp": "2026-11-19 Neon probe"
+  },
+  "orch_neon": {
+   "families": [
+    "orchestrator"
+   ],
+   "effort": "neon",
+   "min_remaining": 0.03,
+   "_exp": "2026-11-19 Orchestrator(Neon)=Neon plans, Hydrogen-high executes"
+  },
+  "argon_low": {
+   "families": [
+    "argon"
+   ],
+   "effort": "low",
+   "min_remaining": 0.03,
+   "_exp": "2026-11-19 Argon probe"
+  },
+  "argon_medium": {
+   "families": [
+    "argon"
+   ],
+   "effort": "medium",
+   "min_remaining": 0.03,
+   "_exp": "2026-11-19 Argon probe"
+  },
+  "argon_high": {
+   "families": [
+    "argon"
+   ],
+   "effort": "high",
+   "min_remaining": 0.03,
+   "_exp": "2026-11-19 Argon probe"
+  },
+  "orch_argon": {
+   "families": [
+    "orchestrator"
+   ],
+   "effort": "g1-pro",
+   "min_remaining": 0.03,
+   "_exp": "Orchestrator(Argon)"
+  },
+  "orchestrator": {
+   "kind": "orchestrator",
+   "planners": [
+    "carbon",
+    "argon",
+    "neon"
+   ],
+   "min_remaining": 0.1,
+   "fallback_role": "worker_hard"
+  },
+  "designer": {
+   "families": [
+    "neon"
+   ],
+   "effort": "high",
+   "min_remaining": 0.1
   }
  }
 }

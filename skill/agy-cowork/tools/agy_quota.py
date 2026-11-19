@@ -56,7 +56,8 @@ def groups_for_model(model_id, snap):
     for g in snap["groups"]:
         name_toks = set(re.split(r"[-_.\s]+", g["name"].lower()))
         member_toks = set(t for m in g["members"] for t in m.split())
-        if (toks & name_toks) - {"gemini", "models", "and"}:
+        # ignore pure version numbers: "gemini-4-hydrogen" must not match group "Gemini 4 Argon" (bug found 2026-11-13)
+        if {t for t in (toks & name_toks) if not t.isdigit()} - {"gemini", "models", "and"}:
             hits.append(("dedicated", g))
         elif toks & member_toks - {"gemini"}:
             hits.append(("shared", g))

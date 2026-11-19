@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Dynamic model picker for agy. Usage: agy_models.py --role worker|worker_hard|planner [--no-quota]"""
+"""Dynamic model picker for agy. Usage: agy_models.py --role worker|worker_hard|orchestrator|designer|planner [--no-quota]
+No model ids are hard-coded: roles name model *families* (matched in the id) or, for kind=orchestrator, the planner
+named in the display name "Orchestrator (<Planner>)" as listed by `agy models`."""
 import argparse, json, re, subprocess, sys, time
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
@@ -28,15 +30,39 @@ def version_key(mid):
     return tuple(int(x) for x in m.group(1).split(".")) if m else (0,)
 
 
+def _orchestrator_cands(r, models, snap, use_quota):
+    """Orchestrator models: display name 'Orchestrator (<Planner>)'. Quota = min(shared group, planner's own group)."""
+    found = []
+    for planner in r["planners"]:
+        for m in models:
+            mm = re.match(r"orchestrator\s*\((\w+)\)", m["name"].strip(), re.I)
+            if not mm or mm.group(1).lower() != planner:
+                continue
+            frac = None
+            if use_quota:
+                vals = [agy_quota.remaining_for_model(m["id"], snap)[0]]
+                vals += [b["remaining"] for g in snap["groups"] if planner in g["name"].lower() for b in g["buckets"].values()]
+                vals = [v for v in vals if v is not None]
+                frac = min(vals) if vals else None
+            found.append((m["id"], frac))
+    return found
+
+
 def pick(role, snap=None, use_quota=True, _seen=None):
     pol = agy_quota.load_policy()
     r = pol["roles"][role]
     _seen = (_seen or set()) | {role}
-    models = [m["id"] for m in list_models()]
+    allm = list_models()
+    models = [m["id"] for m in allm]
     if use_quota and snap is None:
         snap = agy_quota.snapshot(log=False)
     reasons = []
-    if r.get("enabled", True):
+    if r.get("enabled", True) and r.get("kind") == "orchestrator":
+        for mid, frac in _orchestrator_cands(r, allm, snap, use_quota):
+            if frac is None or frac >= r["min_remaining"]:
+                return {"role": role, "model": mid, "remaining": frac, "skipped": reasons}
+            reasons.append(f"{mid}: remaining {frac:.1%} < {r['min_remaining']:.0%}")
+    elif r.get("enabled", True):
         for fam in r["families"]:
             cands = [m for m in models if f"-{fam}-" in m and m.endswith("-" + r["effort"])]
             for mid in sorted(cands, key=version_key, reverse=True):

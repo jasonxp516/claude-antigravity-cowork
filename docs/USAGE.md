@@ -38,18 +38,18 @@ BATCH: delegate 2 item(s) in ONE delegate.py call (--parallel for independent on
 
 ```bash
 python3 $COWORK/tools/delegate.py --preset backend --workdir <repo> \
-  --spec specs/a.md --spec specs/b.md [--then-spec specs/c.md] \
+  --spec specs/a.md --spec specs/b.md [--then-spec specs/c.md] [--fast] \
   --accept "python -m pytest -q tests" --tag <label> > <repo>/.delegate_report.txt 2>&1
 ```
 
 4. 讀報告：
 
 ```
-[SMAR] ACCEPTED=True attempts=2 models=['gemini-3.8-flash-high', …]
-agy tokens=243437 quota_used={'gemini-weekly': 0.0028, 'gemini-5h': 0.0098}
-files=['app.py', 'storage.py', 'validation.py', 'tests/…']
-public=['fetch_attendance', 'parse_attendance_html', 'validate_config', …]
-worker trace: wall=246s calls=40 tests=8 polls=0 waste=0%
+[B6_oa] ACCEPTED=True attempts=2 models=['gemini-pro-orchestrator-g1-pro', 'gemini-4-hydrogen-high']
+agy tokens=216758 quota_used={'Gemini Models/gemini-weekly': 0.0136, 'Gemini Models/gemini-5h': 0.0227}
+files=['evtrack/api.py', 'evtrack/cli.py', 'evtrack/parser.py', …, 'tests/test_storage.py']
+public=['JsonStore', 'filter_tasks', 'main', 'make_app', 'next_occurrence', 'parse_quick', …]
+worker trace: wall=523s calls=55 tests=7 polls=0 waste=0%
 audit: NO_ISSUES
 ```
 
@@ -62,15 +62,16 @@ audit: NO_ISSUES
 
 | 參數 | 說明 |
 |---|---|
-| `--preset backend` | 一次帶入實測最佳設定：Flash high、`--parallel`、`--audit`、重試 2 次、保護 `tests/acceptance/*` |
-| `--preset frontend-js` | 同上，但不平行，並附上 `frontend_rules.md` |
+| `--preset backend` | 一次帶入實測最佳設定：**Orchestrator**（單一 session，不平行；沒額度時退回 Hydrogen high＋`--parallel`）、`--audit`（Hydrogen high）、重試 2 次、保護 `tests/acceptance/*` |
+| `--fast` | 搭配 `--preset backend`：跳過 Orchestrator，直接用 Hydrogen high 平行（約 5 分鐘）。在 Claude 子代理中使用 |
+| `--preset frontend-js` | Hydrogen high、不平行、`--audit`，並附上 `frontend_rules.md` |
 | `--spec FILE` | 規格檔，可多個；`--parallel` 時每個在自己的 git worktree 平行執行 |
 | `--then-spec FILE` | 依賴同批新建模組的規格，等前面合併後才跑 |
 | `--accept CMD` | 驗收指令（必填）；失敗輸出會自動回餵給 Gemini 重試 |
 | `--protect GLOB` | 受保護檔案；被改動會自動還原 |
-| `--role` / `--escalate-role` | 模型角色；`worker_fast`（Flash low）只用在很瑣碎的機械式修改 |
+| `--role` / `--escalate-role` | 模型角色（見第 4 節）；`worker_fast` 只用在很瑣碎的機械式修改；`designer` 用於小型 UI 試做 |
 | `--retries N` | 重試次數，預設 2 |
-| `--timeout S` | 單次 agy 呼叫上限秒數 |
+| `--timeout S` | 單次 agy 呼叫上限秒數（預設 1800） |
 
 退出碼：`0` 通過、`1` 未通過、`3` agy 額度用完（換帳號後再試）、`4` agy 執行錯誤。
 
@@ -78,8 +79,15 @@ audit: NO_ISSUES
 
 | 規模 | 做法 |
 |---|---|
-| 小型（≲300 行） | Claude 自己寫，照 SKILL.md 的設計 checklist |
+| 小型（≲300 行） | Claude 自己寫，照 SKILL.md 的設計 checklist；或（試行）讓 `designer`（Neon high）先做，Claude 只看截圖 |
 | 大型（多頁、大量互動） | 設計系統分工 ↓ |
+
+小型 UI 試行做法（Gemini 4 Neon 盲評 8.5，與 Claude 8 打平，但只評過一次）：
+```bash
+python3 $COWORK/tools/delegate.py --role designer --audit --protect 'tests/acceptance/*' --workdir <repo> \
+  --spec specs/ui.md --accept "python -m pytest -q tests" --tag ui
+```
+完成後截圖（亮／暗／手機／錯誤／空狀態）對照設計 checklist；不要讀它的程式碼（約是 Claude 寫法的 5 倍長）。不合格就自己修 CSS 或重寫。
 
 設計系統分工：
 1. Claude 寫 `css/design.css`（明暗色彩 token、間距字級、所有元件 class 與狀態、RWD；檔頭列出 class 索引）、`index.html` 外殼，和**一個完整的參考頁面**。
@@ -92,17 +100,20 @@ audit: NO_ISSUES
 
 ## 4. 模型選擇（不寫死）
 
-`config/model_policy.json` 只描述「角色 → 模型家族 + effort」，執行時讀 `agy models` 和 `/usage`，挑該家族最新、額度足夠的版本：
+`config/model_policy.json` 只描述「角色 → 模型家族（依偏好排序）+ effort」，執行時讀 `agy models` 和 `/usage`，挑第一個有額度的家族中最新的版本：
 
-| 角色 | 預設 | 用途 |
+| 角色 | 預設（依序嘗試） | 用途 |
 |---|---|---|
-| `worker_hard` | Flash，high | preset 的預設 worker |
-| `worker` | Flash，medium | |
-| `worker_fast` | Flash，low | 只用於瑣碎修改 |
-| `auditor` | Flash，high | 稽核 |
-| `planner` | Carbon / Argon / Pro，high | 額度 <15% 時自動降級為 `worker_hard` |
+| `orchestrator` | Orchestrator (Carbon → Argon → Neon) | `--preset backend` 預設；規劃者額度和 Gemini 共用額度都要 ≥10%，否則退回 `worker_hard` |
+| `worker_hard` | Hydrogen → Flash，high | `--fast`、退回時、`frontend-js` |
+| `worker` | Hydrogen → Flash，medium | |
+| `worker_fast` | Hydrogen → Flash，low | 只用於瑣碎修改 |
+| `auditor` | Hydrogen → Flash，high | 稽核（唯一在稽核測試抓到已知 bug 的模型） |
+| `designer` | Neon，high | 小型 UI 試做 |
+| `planner` | Carbon / Argon / Neon / Pro，high | 額度 <15% 時降級為 `worker_hard` |
 
-新模型（例如 4 Flash、Carbon）上線後會自動被選上，不需要改程式。
+Orchestrator 由 `agy models` 的顯示名稱 `Orchestrator (<規劃者>)` 辨識，額度同時檢查 Gemini 共用桶和規劃者自己的桶（例如 Argon 的獨立週額度）。
+新版本（同家族）上線會自動被選上；新家族（例如 Carbon 以外的新代號）要加進偏好清單。
 
 ## 5. 額度
 

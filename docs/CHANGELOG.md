@@ -12,3 +12,4 @@
 | v6 | `plan_split.py`、`--preset`、交接自我檢查、規格衝突規則、完工前自查、行為軌跡統計；大型 UI 設計系統分工 | 軌跡顯示 51–58% 空轉輪詢；大型 UI 唯一失敗來自 Claude 的交接矛盾 | 62–70% |
 | **v7** | preset 預設 **Flash high**（稽核也 high）；`plan_split.py --subagent` | 盲審 high 8.3 vs 6.5、8 vs 7，low 有 tests 抓不到的 bug；子代理中長等待多付一次快取失效 | 主對話不變；agy 額度約 5× |
 | (v8) | 子代理每 ≤4.5 分鐘喚醒以保溫快取 | 想避免 v7 的快取失效 | 實測多花 22% → **未採用** |
+| **v9** | Gemini 4：`--preset backend` 改用 **Orchestrator**（Carbon/Argon/Neon 規劃＋Hydrogen high 執行，單一 session）；沒額度退回 Hydrogen high 平行；`--fast`；稽核改 Hydrogen high；新增 `designer`（Neon）試做小 UI；修正 Gemini 4 模型被誤算到 Argon 額度的 bug；`--timeout` 預設 1800 | 盲審 Orchestrator 8–8.5、Neon 9、Hydrogen 7、Flash high 6、Claude 自寫 5.5；Orchestrator 額度最低；Neon 小 UI 視覺 8.5 與 Claude 8 打平；只有 Hydrogen 稽核抓到已知 bug | 預期不變（未重測）；Gemini 5h 額度約 1/4–1/6 |

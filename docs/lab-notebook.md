@@ -125,3 +125,25 @@
 - C9 只發生**一次**快取失效（24.6k 重寫；系統提示/工具定義仍命中），代價 ≈ 31k，且與等待長短無關。
 - 保溫每次喚醒 ≈ 0.1×context(~45k) + 輸出 + 新增 tool result ≈ 5–6k；20 分鐘要 5+ 次，而且 harness 會把 >~3 分鐘的指令自動轉背景，造成額外回合（C8 實際 15 個等待相關回合）→ 反而多花 ~30k。
 - 損益兩平約在「等待 ≤ 15 分鐘且每次喚醒只花 1 回合」，太邊緣且不穩定 → 不採用。正確做法：子代理盡早委派（context 小時失效便宜），或直接從主對話委派（1 小時快取）。
+## 第六階段：Gemini 4（Hydrogen / Neon / Argon / Orchestrator）評測（2026-11-19，尚未套用到 skill）
+同起點重跑，`delegate.py`（平行 worktree + 自我稽核，稽核用同模型；Orchestrator 不平行、稽核用 Hydrogen high）。盲審：Sonnet 對 T3–T5 程式碼（query/cli/api）實測重現 bug；前端：Opus 盲評 25 張截圖。
+### T1–T6（50 hidden + 35 項邊界探針 tools/edge_probe_t1_6.py）
+| arm | hidden | 探針 | 盲審 | 耗時 | Gemini 5h | 其他額度 |
+|---|---|---|---|---|---|---|
+| Claude 自寫 A (Sonnet) | 50/50 | 33 | 5.5 | – | – | – |
+| 3.8 Flash low C6 | 50/50 | 33 | – | ~5 分 | 2.9% | – |
+| 3.8 Flash high H6 | 50/50 | 35 | 6 | ~20 分 | 15.2% | – |
+| Hydrogen high B6_hy | 50/50 | 33 | 7 | 4.7 分 | 4.9% | 週 1.8% |
+| Neon high B6_ne | 50/50 | 34 | **9** | 9.9 分 | 12.7% | 週 4.0% |
+| Argon high B6_ar | 50/50 | 34 | 7.5 | 10.3 分 | ~0 | Argon 週 14.8% |
+| Orchestrator(Neon) B6_or | 50/50 | 34 | 8 | 8.7 分 | ~4.1%* | 週 1.1% |
+| **Orchestrator(Argon) B6_oa** | 50/50 | **35** | **8.5** | 8.7 分 | **2.3%** | Argon 週 1.6% |
+*與 Argon 鏈並行，估計值。Orchestrator 軌跡：Neon ~6 次生成規劃、Hydrogen ~12 次執行，同一 session、無子代理。
+### T7–T10（17 hidden + 21 項探針）：Hydrogen high 17/17·21·3.7 分·5h 3.5%；Neon high 17/17·21·9.4 分·9.5%；Argon high 17/17·21·8.1 分·Argon 8.6%；Flash high 17/17·20·13.6 分·13.6%。
+### F1 小前端（Gemini 獨做，Opus 盲評 overall）：Neon 8.5 > Claude(FA) 8 > Hydrogen 7 > Argon 5 > Flash low 4.5。全部 5/5 功能。Neon 4.0% 5h；Hydrogen 2.0%；Argon 4.6% Argon 週。
+### 自我稽核能力（審 C6 已知 2 bug 的程式碼）：Hydrogen high 抓到 1（CLI `-` 參數）＋4 項邊角；Neon / Argon / Flash high 全回 NO_ISSUES。
+### 觀察
+- Hydrogen high 一批 <5 分鐘 → 可能落在子代理 5 分鐘快取內，C9 的子代理快取懲罰可能消失（待驗證）。
+- Orchestrator(Argon) 品質接近 Neon、額度最低：單一 session 省去每 spec 的固定開銷與合併修正。
+- Neon 單獨做小 UI 視覺與 Claude 打平（單次評審，±0.7）；Gemini 程式量約 5 倍（896 vs 164 行）。
+- 修正：agy_quota 的「4」對到 Argon 群組 bug 已在專案版修正（全域未改）。

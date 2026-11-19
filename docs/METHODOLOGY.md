@@ -36,6 +36,10 @@
 | 前端視覺 | Playwright 截圖（桌面／手機／亮暗），Opus 盲評打分；同一組評兩次估計評審變異（約 ±0.7） |
 | 前端程式 | Opus code review Gemini 的 JS，整理共通問題 → `frontend_rules.md` |
 
+| hidden tests 全滿時（Gemini 4） | 依規格寫的**邊界探針**（`edge_probe_t1_6.py` 35 項、`edge_probe_t7_10.py` 21 項），先在舊組別校準（能重現 2026-11-11 盲審找到的 bug） |
+| 程式碼盲審（Gemini 4） | Sonnet 審匿名的 T3–T5，**只計實際重現的 bug**，1–10 分 |
+| 自我稽核能力 | 把含 2 個已知 bug 的實作交給各模型，用 `delegate.py` 的稽核提示詞審（`audit_probe.py`），數抓到幾個 |
+
 盲評對照表在 `data/blind_map*.json`，截圖在 `data/screenshots/`。
 
 ## 觀察 Gemini 行為
@@ -61,4 +65,6 @@ python3 -m venv .venv && .venv/bin/pip install pytest playwright && .venv/bin/pl
 - 每個 arm 只跑 1–2 次，小樣本；主要結論在兩組不同任務上重現。
 - 任務屬中小型；在大型真實專案中，主對話 context 更大，理論上委派更划算，但未直接量測。
 - 量測都在 Sonnet 子代理（5 分鐘快取）中進行；主對話（1 小時快取）的等待懲罰更小。
-- 只測過 Gemini 3.8 Flash。
+- Gemini 4 的比較：每組一次、盲審一次；Claude 基準組（A、FA）是 Sonnet 子代理，不是 Opus。
+- Gemini 4 的 Claude 端 IET 沒有重新量測（流程與 v7 相同）。
+- 週額度差值不穩定，成本比較以 5 小時額度為準；Argon 有獨立額度桶。
