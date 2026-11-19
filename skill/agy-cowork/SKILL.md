@@ -16,7 +16,8 @@ you write yourself is re-read on every later turn. Long waits (> 5 min) expire t
 ```
 python3 $COWORK/tools/plan_split.py '[{"name":"…","kind":"backend|logic|bugfix|refactor|tests|docs|frontend-logic|frontend-visual","lines":N,"testable":true,"judgment":false}, …]'
 ```
-Add `--subagent` if you are a subagent (5-min cache: a wait > 5 min costs one ~30k cache rewrite). Follow its verdict. Rules it encodes: break-even ≈ 300 backend lines per batch; < 40-line items, untestable work,
+Add `--subagent` if you are a subagent; then always pass `--fast` to delegate.py (measured in a subagent on T7–T10:
+`--fast` 75.7k IET = 55–67% of Claude-only; orchestrator with an 11-min wait 124.4k = 91–110%). Follow its verdict. Rules it encodes: break-even ≈ 300 backend lines per batch; < 40-line items, untestable work,
 security/architecture judgment and ALL visual design stay with Claude; batch everything delegable into ONE call.
 
 ## Backend / logic recipe (≤ 4 calls)
@@ -36,7 +37,9 @@ python3 $COWORK/tools/delegate.py --preset backend --workdir <repo> --spec <a.md
    (1h cache) — just end the turn. **In a subagent add `--fast`** (skip the orchestrator; ~5 min fits the 5-min cache).
    Use `--role worker_fast` only for trivial mechanical edits.
 4. When notified, `cat` the report. `ACCEPTED=True`, audit `NO_ISSUES`/fixed, no `WARNING` → done, do NOT open code.
-   Worker reports a spec conflict → check that one point. `ACCEPTED=False` → read the tail; fix small bug yourself or re-delegate once.
+   Worker or audit reports a spec conflict → check that one point against the spec. **If it contradicts your golden
+   test, suspect your golden test first** (2026-11-19 C12: a wrong golden assert made agy reject a correct audit finding
+   and ship 16/17 on hidden tests). `ACCEPTED=False` → read the tail; fix small bug yourself or re-delegate once.
 
 ## Frontend
 - **Visual design is Claude's by default.** 3.8 Flash UIs scored 5.6/10 twice; but on 2026-11-19 a Gemini 4 **Neon**

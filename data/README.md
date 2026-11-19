@@ -16,3 +16,4 @@
 - `blind_map_b6.json`、`blind_map_f1_g4.json`：盲審代號對照。
 - `gemini4_audit_probe.md`：稽核能力測試的原始回覆。
 - `screenshots/F_hy`、`F_ne`、`F_ar`：各組 F1 截圖；`screenshots/compare_gemini4/`：五組並排比較圖。
+- `arms_v9.json`：v9 在子代理中的 Claude 端量測（C10 自己寫、C11 Orchestrator、C12 `--fast`）；IET 見 docs/RESULTS.md §1。

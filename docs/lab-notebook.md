@@ -147,3 +147,13 @@
 - Orchestrator(Argon) 品質接近 Neon、額度最低：單一 session 省去每 spec 的固定開銷與合併修正。
 - Neon 單獨做小 UI 視覺與 Claude 打平（單次評審，±0.7）；Gemini 程式量約 5 倍（896 vs 164 行）。
 - 修正：agy_quota 的「4」對到 Argon 群組 bug 已在專案版修正（全域未改）。
+## 第七階段：v9 的 Claude 端實測（T7–T10，Sonnet 子代理，2026-11-19）
+| arm | 路線 | Claude IET | turns | hidden | 探針 | agy |
+|---|---|---|---|---|---|---|
+| A2（舊） | Claude 自寫 | 112.7k | – | 17/17 | – | – |
+| C10 | v9，plan_split --subagent 判「自己做」→ Claude 自寫 | 136.7k | 9 | 17/17 | 21/22 | – |
+| C12 | v9，子代理 + `--fast`（Hydrogen 平行，387 秒） | **75.7k** | 8 | 16/17 | 20/22 | 5h 6.2% |
+| C11 | v9，子代理 + Orchestrator（678 秒） | 124.4k | 10 | 17/17 | 22/22 | 5h 8.1% |
+- Claude 自寫基準本身有 ±10% 變異（112.7k / 136.7k）。`--fast` 省 33–45%；Orchestrator 等太久，子代理裡省不到錢（品質最好）。
+- C12 的 1 題失敗來自 Claude 自己寫錯的 golden test（redo 是否跨實例保存）；稽核其實指出了，但 worker 以 golden 為準。→ SKILL 加規則：衝突時先懷疑自己的 golden。
+- plan_split：`--subagent` 懲罰由 30k 降為 5k（搭配 --fast），C10 的「自己做」判斷是錯的；新模型對此批預測省 37k，實測 37–61k。

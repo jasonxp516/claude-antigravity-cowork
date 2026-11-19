@@ -28,7 +28,7 @@ BATCH: delegate 2 item(s) in ONE delegate.py call (--parallel for independent on
 | `judgment` | 需要架構／安全／設計判斷；`true` → Claude |
 
 規則：`frontend-visual` 一律 Claude；<40 行的項目 Claude；整批可卸載量低於門檻 → 全部 Claude 自己做。
-在子代理中執行時加 `--subagent`（門檻會提高，見 [RESULTS.md](RESULTS.md#子代理中的等待成本)）。
+在 Claude 子代理中執行時加 `--subagent`：它會提醒你委派時加 `--fast`，因為子代理的快取只有 5 分鐘，見 [RESULTS.md §6](RESULTS.md#6-子代理和主對話有什麼差別)。
 
 ## 2. 後端委派
 

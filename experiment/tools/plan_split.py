@@ -2,9 +2,9 @@
 """Decide Claude-vs-agy division of labor from measured data (2026-11-11 experiments), so the model does not re-derive it.
 
 Usage:  plan_split.py '<json list>' [--subagent]   or   plan_split.py items.json [--subagent]
-        --subagent: you run inside a subagent (5-min prompt cache). A wait > 5 min costs one cache rewrite
-                    (~30k IET, measured C9 2026-11-11), so the break-even rises. Gemini 4 (2026-11-19): pass --fast to
-                    delegate.py in a subagent (Hydrogen-high parallel, ~5 min) to stay near the cache window.
+        --subagent: you run inside a subagent (5-min prompt cache). The verdict then tells you to add --fast to
+                    delegate.py (Hydrogen-high parallel, ~5-7 min). Measured 2026-11-19 on T7-T10: subagent + --fast
+                    75.7k IET (55-67% of Claude-only); subagent + orchestrator (11 min wait) 124.4k (91-110%).
 Item:   {"name": "...", "kind": KIND, "lines": est_lines_of_code, "testable": true, "judgment": false}
 KIND:   backend | logic | bugfix | refactor | tests | frontend-visual | frontend-logic | docs
 Output: one line per item + a batch verdict.
@@ -21,7 +21,7 @@ TOKENS_PER_LINE = {"frontend-logic": 34, "frontend-visual": 34}   # HTML/CSS/JS 
 DEFAULT_TPL = 20              # Python/backend measured ~20 output tokens per line (incl. tests)
 MULT = 12
 FIXED_OVERHEAD = 35_000       # IET per delegation batch (main session, 1-h cache)
-SUBAGENT_CACHE_MISS = 30_000  # extra IET when waiting > 5 min inside a subagent
+SUBAGENT_CACHE_MISS = 5_000   # residual extra IET in a subagent WITH --fast (C12); without --fast it was ~30-40k (C9, C11)
 OFFLOAD_SHARE = {             # share of Claude's would-be output that agy can take over
     "backend": 0.70, "logic": 0.70, "bugfix": 0.6, "refactor": 0.8, "tests": 0.9, "docs": 0.8,
     "frontend-logic": 0.25,   # measured: Claude still writes design system/markup contract + golden tests
@@ -59,7 +59,7 @@ def decide(items, subagent=False):
             who = "AGY" if go else "CLAUDE"
             why += "" if go else " (batch too small)"
         lines.append(f"{who:6} {it.get('name','?'):<28} {it.get('kind'):<16} {it.get('lines'):>5} lines  {why}")
-    verdict = (f"BATCH: delegate {len(batch)} item(s) in ONE delegate.py call (--parallel for independent ones); "
+    verdict = (f"BATCH: delegate {len(batch)} item(s) in ONE delegate.py call{' with --fast (you are a subagent)' if subagent else ''}; "
                f"expected Claude saving ≈ {(total - overhead)/1000:.0f}k IET"
                if go else f"BATCH: do it yourself (offloadable {total/1000:.0f}k IET < break-even {overhead*1.3/1000:.0f}k)")
     return "\n".join(lines + [verdict])

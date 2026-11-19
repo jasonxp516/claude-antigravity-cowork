@@ -62,9 +62,9 @@ python3 -m venv .venv && .venv/bin/pip install pytest playwright && .venv/bin/pl
 前端截圖：`tools/shoot_front.py`（F1）、`tools/shoot_f2.py`（F2）。
 
 ## 已知限制
-- 每個 arm 只跑 1–2 次，小樣本；主要結論在兩組不同任務上重現。
+- 每個 arm 只跑 1–2 次，小樣本；主要結論在兩組不同任務上重現。Claude 自己寫的基準在同一批任務上兩次相差約 20%（112.7k / 136.7k）。
 - 任務屬中小型；在大型真實專案中，主對話 context 更大，理論上委派更划算，但未直接量測。
 - 量測都在 Sonnet 子代理（5 分鐘快取）中進行；主對話（1 小時快取）的等待懲罰更小。
 - Gemini 4 的比較：每組一次、盲審一次；Claude 基準組（A、FA）是 Sonnet 子代理，不是 Opus。
-- Gemini 4 的 Claude 端 IET 沒有重新量測（流程與 v7 相同）。
+- v9 的 Claude 端 IET 只在子代理中量過（C10–C12，T7–T10）；主對話沒有直接量測。C11 和 C12 同時執行，它們的 Gemini 額度差值互相干擾。
 - 週額度差值不穩定，成本比較以 5 小時額度為準；Argon 有獨立額度桶。

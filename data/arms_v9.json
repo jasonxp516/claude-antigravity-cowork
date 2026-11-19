@@ -1,0 +1,38 @@
+{
+ "C10": {
+  "desc": "Skill v9 in subagent; plan_split --subagent said do-it-yourself (Claude-only)",
+  "transcript": "(subagent transcript, not published)",
+  "ws": "runs/C10",
+  "tag": null,
+  "tasks": [
+   "T7",
+   "T8",
+   "T9",
+   "T10"
+  ]
+ },
+ "C11": {
+  "desc": "Skill v9 in subagent, orchestrator (no --fast)",
+  "transcript": "(subagent transcript, not published)",
+  "ws": "runs/C11",
+  "tag": "C11",
+  "tasks": [
+   "T7",
+   "T8",
+   "T9",
+   "T10"
+  ]
+ },
+ "C12": {
+  "desc": "Skill v9 in subagent, forced delegate --fast",
+  "transcript": "(subagent transcript, not published)",
+  "ws": "runs/C12",
+  "tag": "C12",
+  "tasks": [
+   "T7",
+   "T8",
+   "T9",
+   "T10"
+  ]
+ }
+}
