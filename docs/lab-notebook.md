@@ -157,3 +157,4 @@
 - Claude 自寫基準本身有 ±10% 變異（112.7k / 136.7k）。`--fast` 省 33–45%；Orchestrator 等太久，子代理裡省不到錢（品質最好）。
 - C12 的 1 題失敗來自 Claude 自己寫錯的 golden test（redo 是否跨實例保存）；稽核其實指出了，但 worker 以 golden 為準。→ SKILL 加規則：衝突時先懷疑自己的 golden。
 - plan_split：`--subagent` 懲罰由 30k 降為 5k（搭配 --fast），C10 的「自己做」判斷是錯的；新模型對此批預測省 37k，實測 37–61k。
+- C11 後續：子代理自寫 pgrep 等待迴圈卡住（比對到自己），晚到喚醒多付 67k（總 191k）→ SKILL 加規則禁止自寫等待迴圈。

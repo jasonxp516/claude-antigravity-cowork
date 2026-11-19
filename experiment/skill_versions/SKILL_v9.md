@@ -24,7 +24,9 @@ security/architecture judgment and ALL visual design stay with Claude; batch eve
 1. Read only files needed for signatures/types.
 2. One Write: `tests/acceptance/test_golden.py` — 2–4 asserts per task pinning the trickiest rules (happy, edge, error),
    values double-checked against the spec. agy writes the full suite.
-3. Delegate, background, then **end your turn without polling**:
+3. Delegate, background, then **end your turn without polling** — never write your own wait loop (e.g. `until ! pgrep -f
+   delegate.py` matches its own command line and hangs; one such loop cost a subagent +67k IET in C11). The background
+   task's completion notification is the only wait you need:
 ```
 python3 $COWORK/tools/delegate.py --preset backend --workdir <repo> --spec <a.md> --spec <b.md> [--then-spec <c.md>] \
   --accept "<python> -m pytest -q tests" --tag <label> > <repo>/.delegate_report.txt 2>&1      # Bash run_in_background
